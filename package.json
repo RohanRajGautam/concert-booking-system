@@ -1,0 +1,8 @@
+{
+    "name": "concert-booking-system",
+    "private": true,
+    "workspaces": [
+        "backend",
+        "frontend"
+    ]
+}
