@@ -33,7 +33,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ booking, onClose }) 
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: 'var(--text-muted)' }}>Total Paid:</span>
-            <span style={{ fontWeight: 700, color: 'var(--accent)' }}>${(booking.total_amount / 100).toFixed(2)}</span>
+            <span style={{ fontWeight: 700, color: 'var(--accent)' }}>${(booking.total_amount)}</span>
           </div>
         </div>
 
