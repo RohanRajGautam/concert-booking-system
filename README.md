@@ -42,7 +42,7 @@ Open the app in a browser. You'll be redirected to `/login`. Click **Create one*
 
 ```
 POST /api/auth/register
-{ "username": "alice", "email": "alice@example.com", "password": "secret123" }
+{ "username": "rohan", "email": "rohan@rrg.com.np", "password": "secret123" }
 ```
 
 ### 2. Log In
@@ -51,7 +51,7 @@ If you already have an account, sign in at `/login`.
 
 ```
 POST /api/auth/login
-{ "email": "alice@example.com", "password": "secret123" }
+{ "email": "rohan@rrg.com.np", "password": "secret123" }
 ```
 
 Both endpoints return `{ user, token }`. The frontend stores the JWT in `localStorage` and attaches it as `Authorization: Bearer <token>` on every API request.
@@ -153,6 +153,29 @@ The system is designed to support a distributed, global user base with the follo
 - **Single Currency**: As per requirements, the system currently supports a single primary currency (USD).
 - **Formatting**: The frontend uses the `Intl.NumberFormat` API to ensure currency values are formatted correctly according to international standards (e.g., `$1,200.00`).
 - **i18n Provision**: The UI structure is modular, allowing for the easy integration of internationalization frameworks (like `react-i18next`) in the future.
+
+---
+
+## Non-Functional Requirements & Design for Scale
+
+### 1. High Availability (99.99% "Four Nines")
+To achieve 99.99% availability (max ~52 minutes of downtime per year), the current design would be extended as follows:
+- **Multi-Region Deployment**: Deploy the Fastify application across multiple AWS regions (e.g., us-east-1 and eu-west-1) behind a **Route53 Global Accelerator** or Cloudflare Load Balancer.
+- **Database Resilience**: Transition from a single Postgres instance to a **Managed Cluster (e.g., AWS Aurora)** with cross-region replicas and automated failover.
+- **Statelessness**: Since the auth system is JWT-based, application nodes can be terminated and replaced instantly without losing user sessions.
+
+### 2. Scale & Concurrency (1M DAU / 50k Peak)
+The architecture supports scaling to 50k concurrent users through:
+- **Horizontal Scaling**: Fastify's low overhead allows running hundreds of small containers in an **ECS/EKS cluster**. Auto-scaling triggers based on CPU/Request count would handle peak traffic during ticket drops.
+- **Connection Pooling**: Use **PgBouncer** to manage the thousands of database connections that 50k concurrent users would generate, preventing the Postgres connection limit from being hit.
+- **Load Balancing**: Distribute traffic across application nodes. For static assets, use a **CDN (CloudFront/Akamai)** to offload traffic from the application server.
+
+### 3. Performance (p95 < 500ms)
+To maintain a p95 latency under 500ms for booking requests:
+- **Pessimistic Locking Efficiency**: By locking only the specific `tier` row, we minimize the "blast radius" of the lock. Unrelated bookings (e.g., for different concerts or tiers) proceed in parallel.
+- **Optimized SQL**: Using raw SQL and a light framework (Fastify) ensures that the overhead between the request hitting the server and the query hitting the DB is minimal (often < 10ms).
+- **Read/Write Splitting**: Direct `GET /api/tiers` requests to read-replicas while reserving the primary instance for `POST /api/bookings` transactions.
+- **Caching**: Implement a **Redis** layer to cache tier metadata and availability (with a short TTL), reducing the read load on the primary DB during peak traffic.
 
 ---
 
