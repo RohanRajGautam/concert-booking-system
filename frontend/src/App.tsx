@@ -65,17 +65,20 @@ function MainLayout() {
       ) : (
         <>
           <Catalog onSelectTier={(tier) => setSelectedTier(tier)} />
+
+          {selectedTier && (
+            <BookingForm
+              tier={selectedTier}
+              onCancel={() => setSelectedTier(null)}
+              onSuccess={handleBookingSuccess}
+            />
+          )}
+
           <BookingHistory />
         </>
       )}
 
-      {selectedTier && (
-        <BookingForm
-          tier={selectedTier}
-          onCancel={() => setSelectedTier(null)}
-          onSuccess={handleBookingSuccess}
-        />
-      )}
+      
     </div>
   )
 }

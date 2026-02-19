@@ -26,8 +26,6 @@ export const BookingForm: React.FC<BookingFormProps> = ({ tier, onSuccess, onCan
 
   const mutation = useMutation({
     mutationFn: async () => {
-      // userId is no longer sent in the body — the backend
-      // reads it from the JWT token attached by the Axios interceptor.
       const { data } = await api.post<Booking>('/bookings', {
         tierId: tier.id,
         quantity,
@@ -47,22 +45,51 @@ export const BookingForm: React.FC<BookingFormProps> = ({ tier, onSuccess, onCan
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>Confirm Booking: {tier.name}</h2>
-        <div className="quantity-stepper">
-          <button onClick={() => setQuantity(q => Math.max(1, q - 1))}>−</button>
-          <span>{quantity}</span>
-          <button onClick={() => setQuantity(q => Math.min(tier.available_seats, q + 1))} disabled={quantity >= tier.available_seats}>+</button>
+        <h2 className="modal-title">Confirm Booking</h2>
+        <p className="tier-name">{tier.name}</p>
+
+        <div className="quantity-container">
+          <button
+            className="stepper-button"
+            onClick={() => setQuantity(q => Math.max(1, q - 1))}
+            disabled={quantity <= 1}
+          >
+            −
+          </button>
+          <span className="quantity">{quantity}</span>
+          <button
+            className="stepper-button"
+            onClick={() => setQuantity(q => Math.min(tier.available_seats, q + 1))}
+            disabled={quantity >= tier.available_seats}
+          >
+            +
+          </button>
         </div>
+
         <div className="price-summary">
-          Total: ${(totalCents / 100).toFixed(2)}
+          Total: <span className="total-price">${(totalCents / 100).toFixed(2)}</span>
         </div>
+
+        {mutation.isError && (
+          <p className="error">{resolveErrorMessage(mutation.error)}</p>
+        )}
+
         <div className="actions">
-          <button onClick={onCancel} disabled={mutation.isPending}>Cancel</button>
-          <button className="primary" onClick={() => mutation.mutate()} disabled={mutation.isPending}>
+          <button
+            className="btn cancel"
+            onClick={onCancel}
+            disabled={mutation.isPending}
+          >
+            Cancel
+          </button>
+          <button
+            className="btn primary"
+            onClick={() => mutation.mutate()}
+            disabled={mutation.isPending}
+          >
             {mutation.isPending ? 'Processing...' : 'Confirm & Pay'}
           </button>
         </div>
-        {mutation.isError && <p className="error">{resolveErrorMessage(mutation.error)}</p>}
       </div>
     </div>
   );

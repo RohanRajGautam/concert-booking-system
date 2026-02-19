@@ -12,7 +12,7 @@ export const Catalog: React.FC<CatalogProps> = ({ onSelectTier }) => {
 
   if (isLoading) {
     return (
-      <div className="catalog-grid">
+      <div className="catalog-grid container">
         {[1, 2, 3].map(i => <div key={i} className="card skeleton-shimmer" style={{ height: 200 }} />)}
       </div>
     );
@@ -22,11 +22,11 @@ export const Catalog: React.FC<CatalogProps> = ({ onSelectTier }) => {
 
   return (
     <div className="container">
-      <header>
+      <header className="catalog-header">
         <h1>Summer Live 2026</h1>
         <p>Grab your tickets before they're gone!</p>
       </header>
-      
+
       <div className="catalog-grid">
         {tiers?.map(tier => (
           <TierCard key={tier.id} tier={tier} onSelect={onSelectTier} />
@@ -35,3 +35,4 @@ export const Catalog: React.FC<CatalogProps> = ({ onSelectTier }) => {
     </div>
   );
 };
+
