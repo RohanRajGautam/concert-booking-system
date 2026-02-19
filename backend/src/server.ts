@@ -9,9 +9,9 @@ import { bookingRoutes } from './features/bookings/bookings.routes';
 
 export function buildServer() {
   const app = Fastify({ 
-    logger: {
-      transport: config.nodeEnv === 'development' ? { target: 'pino-pretty' } : undefined
-    }
+    logger: config.nodeEnv === 'development'
+      ? { transport: { target: 'pino-pretty', options: { translateTime: 'HH:MM:ss Z', ignore: 'pid,hostname' } } }
+      : true
   });
 
   app.register(cors, { origin: true });
