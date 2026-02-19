@@ -63,13 +63,13 @@ export const BookingHistory: React.FC = () => {
               <div className="top">
                 <h3>{b.tier_name ?? 'Ticket Tier'}</h3>
                 <div className="price">
-                  ${(b.total_amount / 100)}
+                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(b.total_amount / 100)}
                 </div>
               </div>
 
               <div className="meta">
                 <span>{b.quantity} tickets</span>
-                <span>${(unit / 100)} each</span>
+                <span>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(unit / 100)} each</span>
               </div>
 
               <div className="date">

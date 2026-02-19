@@ -137,6 +137,25 @@ Tests cover component rendering, booking form submission, error display, and boo
 
 ---
 
+## Global User Base Support
+
+The system is designed to support a distributed, global user base with the following provisions:
+
+### 1. Timezone Handling
+- **Backend (UTC)**: All timestamps are stored in PostgreSQL using the `TIMESTAMPTZ` type. This ensures that time is recorded in UTC, irrespective of the server's local time.
+- **Client (Local)**: The frontend uses standard JavaScript `Date` objects and `.toLocaleDateString()` / `.toLocaleTimeString()` to render timestamps. This automatically formats time according to the user's system locale and timezone settings.
+
+### 2. Multi-Region Ready
+- **Stateless Auth**: By using JWTs instead of server-side sessions, the API can be scaled horizontally across multiple geographical regions (e.g., through a Global Load Balancer) without requiring session synchronization (Sticky Sessions).
+- **Database Scaling**: While currently using a single Postgres instance, the architecture is compatible with distributed SQL databases (like CockroachDB or YugabyteDB) or read-replicas in different regions.
+
+### 3. Currency & Localization
+- **Single Currency**: As per requirements, the system currently supports a single primary currency (USD).
+- **Formatting**: The frontend uses the `Intl.NumberFormat` API to ensure currency values are formatted correctly according to international standards (e.g., `$1,200.00`).
+- **i18n Provision**: The UI structure is modular, allowing for the easy integration of internationalization frameworks (like `react-i18next`) in the future.
+
+---
+
 ## How Double-Booking Is Prevented
 
 ### The Problem
