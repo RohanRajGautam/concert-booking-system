@@ -67,7 +67,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({ tier, onSuccess, onCan
         </div>
 
         <div className="price-summary">
-          Total: <span className="total-price">${(totalCents / 100).toFixed(2)}</span>
+          Total: <span className="total-price">${(totalCents / 100)}</span>
         </div>
 
         {mutation.isError && (

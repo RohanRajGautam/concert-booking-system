@@ -63,13 +63,13 @@ export const BookingHistory: React.FC = () => {
               <div className="top">
                 <h3>{b.tier_name ?? 'Ticket Tier'}</h3>
                 <div className="price">
-                  Rs. {(b.total_amount / 100)}
+                  ${(b.total_amount / 100)}
                 </div>
               </div>
 
               <div className="meta">
                 <span>{b.quantity} tickets</span>
-                <span>Rs. {(unit / 100)} each</span>
+                <span>${(unit / 100)} each</span>
               </div>
 
               <div className="date">

@@ -21,7 +21,7 @@ export const TierCard: React.FC<TierCardProps> = ({ tier, onSelect }) => {
 
       <div className="card-header">
         <h3>{tier.name}</h3>
-        <p className="price">Rs. {(tier.price / 100)}</p>
+        <p className="price">${(tier.price / 100)}</p>
       </div>
 
       <div className="card-body">
