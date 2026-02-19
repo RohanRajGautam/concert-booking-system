@@ -10,10 +10,12 @@ let authToken: string;
 
 beforeAll(async () => {
   await runMigrations();
+  await pool.query('TRUNCATE users, bookings, idempotency_keys CASCADE');
+  await pool.query('UPDATE tiers SET available_seats = total_capacity');
   await app.ready();
 
   const res = await request(app.server).post('/api/auth/register').send({
-    username: 'concurrtest',
+    username: `concurrtest-${randomUUID()}`,
     email: `concurrtest-${randomUUID()}@test.com`,
     password: 'password123',
   });

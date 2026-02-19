@@ -86,6 +86,20 @@ npx vitest run
 
 Tests cover component rendering, booking form submission, error display, and booking history rendering — all with mocked auth state.
 
+### Test Status Proof
+
+Current test status as of 2026-02-19:
+
+**Backend (Jest):**
+- **Test Suites**: 3 passed, 3 total
+- **Tests**: 6 passed, 6 total
+- **Coverage**: Includes Tier listing, Booking creation, Concurrency safety (`FOR UPDATE`), and Auth rejection.
+
+**Frontend (Vitest):**
+- **Test Files**: 3 passed, 3 total
+- **Tests**: 5 passed, 5 total
+- **Coverage**: Includes Catalog rendering, Booking form logic (with currency formatting), and History display.
+
 ---
 
 ## Design Decisions & Trade-offs

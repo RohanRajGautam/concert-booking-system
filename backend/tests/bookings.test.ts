@@ -11,11 +11,13 @@ let testUserId: string;
 
 beforeAll(async () => {
   await runMigrations();
+  await pool.query('TRUNCATE users, bookings, idempotency_keys CASCADE');
+  await pool.query('UPDATE tiers SET available_seats = total_capacity');
   await app.ready();
 
   // Register a test user to get a valid JWT
   const res = await request(app.server).post('/api/auth/register').send({
-    username: 'booktest',
+    username: `booktest-${randomUUID()}`,
     email: `booktest-${randomUUID()}@test.com`,
     password: 'password123',
   });
