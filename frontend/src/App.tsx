@@ -34,7 +34,7 @@ function MainLayout() {
   return (
     <div className="min-h-screen">
       <nav style={{ padding: '1rem 2rem', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontWeight: 800, fontSize: '1.25rem' }}>CONCERT<span style={{ color: 'var(--primary)' }}>TIX</span></div>
+        <div style={{ fontWeight: 800, fontSize: '1.25rem' }}>CONCERT<span style={{ color: 'var(--primary)' }}>NP</span></div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
             Signed in as <strong style={{ color: 'var(--accent)' }}>{user?.username}</strong>

@@ -36,7 +36,7 @@ export const LoginPage: React.FC = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <h1>CONCERT<span style={{ color: 'var(--primary)' }}>TIX</span></h1>
+          <h1>CONCERT<span style={{ color: 'var(--primary)' }}>NP</span></h1>
           <p>Sign in to your account</p>
         </div>
 
