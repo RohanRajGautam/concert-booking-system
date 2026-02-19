@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTiers } from '../../hooks/useTiers';
 import { TierCard } from './TierCard';
-import { BookingForm } from '../booking/BookingForm';
-import { BookingHistory } from '../booking/BookingHistory';
-import type { Tier, Booking } from '../../types';
+import type { Tier } from '../../types';
 
-export const Catalog: React.FC = () => {
+interface CatalogProps {
+  onSelectTier: (tier: Tier) => void;
+}
+
+export const Catalog: React.FC<CatalogProps> = ({ onSelectTier }) => {
   const { data: tiers, isLoading, isError } = useTiers();
-  const [selectedTier, setSelectedTier] = useState<Tier | null>(null);
-  const [lastBooking, setLastBooking] = useState<Booking | null>(null);
 
   if (isLoading) {
     return (
@@ -29,29 +29,9 @@ export const Catalog: React.FC = () => {
       
       <div className="catalog-grid">
         {tiers?.map(tier => (
-          <TierCard key={tier.id} tier={tier} onSelect={setSelectedTier} />
+          <TierCard key={tier.id} tier={tier} onSelect={onSelectTier} />
         ))}
       </div>
-
-      <BookingHistory />
-
-      {selectedTier && (
-        <BookingForm 
-          tier={selectedTier} 
-          onSuccess={(b) => {
-            setLastBooking(b);
-            setSelectedTier(null);
-          }} 
-          onCancel={() => setSelectedTier(null)} 
-        />
-      )}
-
-      {lastBooking && (
-        <div className="toast success">
-          Booking Confirmed! ID: {lastBooking.id.slice(0, 8)}
-          <button onClick={() => setLastBooking(null)}>✕</button>
-        </div>
-      )}
     </div>
   );
 };

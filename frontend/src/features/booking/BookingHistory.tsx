@@ -2,14 +2,18 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api';
 import type { Booking } from '../../types';
+import { useAuthStore } from '../../store/useAuthStore';
 
 export const BookingHistory: React.FC = () => {
+  const userId = useAuthStore((s) => s.user?.id);
+
   const { data: bookings, isLoading } = useQuery<Booking[]>({
-    queryKey: ['bookings'],
+    queryKey: ['bookings', userId],
     queryFn: async () => {
-      const { data } = await api.get<Booking[]>('/bookings/00000000-0000-0000-0000-000000000001');
+      const { data } = await api.get<Booking[]>(`/bookings/${userId}`);
       return data;
     },
+    enabled: !!userId,
   });
 
   if (isLoading) return <div>Loading...</div>;

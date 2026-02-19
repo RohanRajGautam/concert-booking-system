@@ -26,9 +26,10 @@ export const BookingForm: React.FC<BookingFormProps> = ({ tier, onSuccess, onCan
 
   const mutation = useMutation({
     mutationFn: async () => {
+      // userId is no longer sent in the body — the backend
+      // reads it from the JWT token attached by the Axios interceptor.
       const { data } = await api.post<Booking>('/bookings', {
         tierId: tier.id,
-        userId: '00000000-0000-0000-0000-000000000001',
         quantity,
         idempotencyKey: crypto.randomUUID(),
       });
@@ -36,6 +37,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({ tier, onSuccess, onCan
     },
     onSuccess: (booking) => {
       queryClient.invalidateQueries({ queryKey: ['tiers'] });
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
       onSuccess(booking);
     },
   });
