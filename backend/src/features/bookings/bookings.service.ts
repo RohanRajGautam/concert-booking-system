@@ -27,6 +27,40 @@ function simulatePayment(): void {
 export async function createBooking(
   input: CreateBookingInput,
 ): Promise<CreateBookingResult> {
+  /*
+   * ── Double-booking prevention ──────────────────────────────────────────
+   *
+   * Race condition: Two (or more) concurrent requests try to book the last
+   * remaining seat(s) for the same tier.  Without synchronisation both would
+   * read the same `available_seats` value, both would pass the availability
+   * check, and both would decrement — overselling the event.
+   *
+   * Why SELECT … FOR UPDATE (pessimistic locking):
+   *   We lock the tier row at the start of the transaction.  Any concurrent
+   *   transaction that tries to lock the *same* tier row will block on the
+   *   database until the first transaction either COMMITs or ROLLBACKs.
+   *   The second transaction then re-reads the *updated* seat count and
+   *   proceeds (or fails) based on the real available inventory.
+   *
+   *   Optimistic locking (e.g. a version column with a WHERE clause) would
+   *   technically work but is a poor fit here.  Ticket drops create
+   *   extremely high contention on a small number of rows.  Optimistic
+   *   retries would cascade, burning CPU and DB connections while every
+   *   request loops hoping for a lucky commit.  Pessimistic locking is
+   *   more honest: you wait your turn, you get an answer, done.
+   *
+   * Idempotency:
+   *   Checked *first*, inside the same transaction.  If the client retries
+   *   with the same idempotency key (e.g. network timeout after a successful
+   *   commit), we return the cached result without decrementing seats again.
+   *   This protects against accidental duplicate charges and double-counting,
+   *   not against the race condition itself — locking does that.
+   *
+   * See:
+   *   fetchTierByIdForUpdate  → ../tiers/tiers.queries.ts
+   *   withTransaction         → ../../db/transaction.ts
+   * ──────────────────────────────────────────────────────────────────────
+   */
   return withTransaction(async (client) => {
     // 1. Idempotency check
     const cached = await findCachedIdempotencyResponse(client, input.idempotencyKey);

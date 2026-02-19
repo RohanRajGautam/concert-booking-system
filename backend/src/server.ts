@@ -6,6 +6,7 @@ import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 import { tierRoutes } from './features/tiers/tiers.routes';
 import { bookingRoutes } from './features/bookings/bookings.routes';
+import { authRoutes } from './features/auth/auth.routes';
 
 export function buildServer() {
   const app = Fastify({ 
@@ -25,6 +26,7 @@ export function buildServer() {
 
   app.register(tierRoutes, { prefix: '/api/tiers' });
   app.register(bookingRoutes, { prefix: '/api/bookings' });
+  app.register(authRoutes, { prefix: '/api/auth' });
 
   return app;
 }
