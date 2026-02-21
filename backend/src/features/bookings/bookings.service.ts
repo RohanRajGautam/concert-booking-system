@@ -62,13 +62,13 @@ export async function createBooking(
    * ──────────────────────────────────────────────────────────────────────
    */
   return withTransaction(async (client) => {
-    // 1. Idempotency check
+    // 1. Idempotency check (for retries)
     const cached = await findCachedIdempotencyResponse(client, input.idempotencyKey);
     if (cached) {
       return { booking: cached, fromCache: true };
     }
 
-    // 2. Pessimistic lock on the tier row
+    // 2. Pessimistic lock on the tier row (for race condition)
     const tier = await fetchTierByIdForUpdate(client, input.tierId);
     if (!tier) {
       throw new TierNotFoundError();

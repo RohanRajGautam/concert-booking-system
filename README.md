@@ -119,6 +119,16 @@ Current test status as of 2026-02-19:
 - Ticket sales generate extremely high write contention on a small number of rows. Optimistic locking (version columns) would cause cascading retries under load, wasting DB connections and degrading UX.
 - Pessimistic locking is more predictable: concurrent requests queue at the database level and each gets an authoritative answer.
 
+To test:
+
+Use this command to update the available seats for a tier:
+
+Set the available inventory to 1 for the VIP tier:
+
+```bash
+docker compose exec db psql -U postgres -d concert_booking -c "UPDATE tiers SET available_seats = 1 WHERE name = 'VIP' RETURNING *;"
+``` 
+
 ### Query Layer
 
 **Approach**: Raw SQL via the `pg` driver, no ORM.
